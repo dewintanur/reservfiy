@@ -8,7 +8,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
 
 <div id="qrcode"></div>
 
@@ -123,8 +122,10 @@
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
 
 <script>
+    
     function updateTotal() {
         const basePrice = parseFloat({{ $package->price }});  // Harga asli dari package
         const tax = parseFloat({{ $tax }});                   // Pajak yang dikenakan
@@ -137,53 +138,46 @@
         document.getElementById('applied_discount').value = discountPercentage;
         document.getElementById('final_total').value = total.toFixed(2);
     }
-
     function updatePaymentModal() {
-    const paymentMethod = document.getElementById('payment-method').value;
-    const paymentModalBody = document.getElementById('paymentModalBody');
-    let modalContent = '';
+        const paymentMethod = document.getElementById('payment-method').value;
+        const paymentModalBody = document.getElementById('paymentModalBody');
+        let modalContent = '';
 
-    if (paymentMethod === 'e_wallet') {
-        console.log(QRCode);
+        if (paymentMethod === 'e_wallet') {
+            const qrData = 'https://www.instagram.com/reservfiy?igsh=dHptcXRsa2JoaGVm'; // Ganti dengan variabel yang sesuai
+            const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${qrData}&size=200x200`;
 
-        // Mendapatkan URL atau data yang akan disimpan dalam QR code
-        const qrData = '123456'; // Misalnya ID reservasi
-        
-        // Pastikan qrcode.js dimuat sebelum menggunakannya
-        if (typeof QRCode === 'function') {
-            // Buat QR code menggunakan qrcode.js
-            const qrCode = new QRCode(document.getElementById('qrcode'), {
-                text: qrData,
-                width: 200,
-                height: 200
-            });
+            modalContent = `
+                <p class="mb-3">Pay using E-Wallet</p>
+                <p class="text-center">Scan the QR code or enter the payment code displayed below:</p>
+
+                <div class="text-center mb-4">
+                    <img src="${qrImageUrl}" alt="QR Code" style="max-width: 100%;">
+                </div>
+            `;
+        } else if (paymentMethod === 'bank_transfer') {
+            modalContent = `
+                <div class="payment-method-info">
+                    <p class="mb-3">Pay via Bank Transfer</p>
+                    <p>Please transfer the total amount to the following bank account:</p>
+                    <p>Bank: Bank ABC</p>
+                    <p>Account Number: 123456789</p>
+                    <p class="amount">Amount: Rp ${document.getElementById('total').innerText}</p>
+                </div>
+            `;
         } else {
-            console.error('QRCode library is not loaded.');
+            modalContent = `
+                <div class="payment-method-info">
+                    <p class="mb-3">Pay using Cash</p>
+                    <p>Please prepare the exact amount of cash.</p>
+                    <p class="amount">Amount: Rp ${document.getElementById('total').innerText}</p>
+                </div>
+            `;
         }
 
-        modalContent = `
-            <p>Pay using E-Wallet</p>
-            <p>Scan the QR code or enter the payment code displayed below:</p>
-            <div id="qrcode"></div>
-        `;
-    } else if (paymentMethod === 'bank_transfer') {
-        modalContent = `
-            <p>Pay via Bank Transfer</p>
-            <p>Please transfer the total amount to the following bank account:</p>
-            <p>Bank: Bank ABC</p>
-            <p>Account Number: 123456789</p>
-            <p>Amount: Rp ${document.getElementById('total').innerText}</p>
-        `;
-    } else {
-        modalContent = `
-            <p>Pay using Cash</p>
-            <p>Please prepare the exact amount of cash.</p>
-            <p>Amount: Rp ${document.getElementById('total').innerText}</p>
-        `;
+        paymentModalBody.innerHTML = modalContent;
     }
 
-    paymentModalBody.innerHTML = modalContent;
-}
     function showPaymentModal() {
         updatePaymentModal();
         $('#paymentModal').modal('show');
@@ -213,5 +207,33 @@
     .btn-brown:hover {
         background-color: #A0522D;
     }
+    #qrcode {
+        text-align: center;
+    }
+
+    #qrcode img {
+        display: inline-block;
+        justify-content: center;
+    }
+    .payment-method-info {
+        background-color: #f8f9fa; /* Warna latar belakang */
+        border-radius: 10px; /* Sudut pembulatan */
+        padding: 20px; /* Padding */
+        margin-bottom: 20px; /* Margin bawah */
+    }
+
+    .payment-method-info p {
+        margin-bottom: 10px; /* Margin bawah setiap paragraf */
+    }
+
+    .payment-method-info p:last-child {
+        margin-bottom: 0; /* Hapus margin bawah untuk paragraf terakhir */
+    }
+
+    .payment-method-info .amount {
+        font-weight: bold; /* Teks tebal */
+    }
+    
 </style>
 @endsection
+

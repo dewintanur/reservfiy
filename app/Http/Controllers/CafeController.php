@@ -29,7 +29,10 @@ class CafeController extends Controller
             return $cafe;
         });
 
-        return view('cafes.index', ['cafes' => $cafes]);
+        return view('cafes.index', [
+            'cafes' => $cafes,
+            'searchQuery' => '', // Default to an empty string if no search has been performed
+        ]);
     }
 
     public function show(Cafe $cafe)
@@ -51,19 +54,19 @@ class CafeController extends Controller
     }
     public function search(Request $request)
     {
-        $query = Cafe::query();
-
-        if ($request->filled('search')) {
-            $searchTerm = $request->search;
-            $query->where(function($q) use ($searchTerm) {
-                $q->where('name', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('location', 'like', '%' . $searchTerm . '%');
-            });
-        }
-
-        $cafes = $query->get();
-
-        return view('cafes.index', compact('cafes'));
+        $searchQuery = $request->input('search');
+        $cafes = Cafe::query()
+            ->where('name', 'LIKE', "%{$searchQuery}%")
+            ->orWhere('location', 'LIKE', "%{$searchQuery}%")
+            ->orWhereHas('categories', function ($query) use ($searchQuery) {
+                $query->where('name', 'LIKE', "%{$searchQuery}%"); // Assuming 'name' is the column in 'categories' table
+            })
+            ->get();
+    
+        return view('cafes.index', [
+            'cafes' => $cafes,
+            'searchQuery' => $searchQuery,
+        ]);
     }
     
     // public function updateCafeStatus()

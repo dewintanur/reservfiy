@@ -16,7 +16,7 @@
     <div class="you-have-successfully-sent-invoice fs-5 mb-3" style="color: #000;">
       You have successfully sent invoice
     </div>
-    <div class="group-5 container bg-white rounded shadow p-4 mb-3 ">
+    <div class="group-5 container bg-white rounded-3 shadow p-4 mb-3" style="max-width: 500px; margin: 0 auto;">
       <div class="no-invoice fs-6 mb-2 fw-bold" style="color: #000;">
         No Invoice
       </div>
@@ -30,7 +30,7 @@
         Rp {{ number_format($reservation->package->price + ($reservation->package->price * 0.01), 2) }}
       </div>
       <div class="container-4 mt-3">
-        <img class="iconbarcode" src="../assets/vectors/iconbarcode_x2.svg" alt="Barcode" />
+        <img class="iconbarcode" src="{{ $barcodeUrl }}" alt="Barcode" style="max-width: 100%; width: 200px;" />
       </div>
       <span class="payment-method fs-6" style="color: #000;">
         {{ $reservation->payment_method }}

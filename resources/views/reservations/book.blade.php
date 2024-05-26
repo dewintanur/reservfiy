@@ -47,10 +47,10 @@
                 <div class="col-md-2">
                     <label for="table_number" class="form-label">Pick a Table</label>
                 </div>
-
                 <div class="col">
                     <div class="input-group">
                         <select class="form-control" id="table_id" name="table_id" required>
+                        <option value="">Choose Number Of Person First</option>
                             @foreach($tables as $table)
                                 <option value="{{ $table->id }}">Table {{ $table->table_number }} ({{ $table->capacity }}
                                     person)</option>
@@ -83,6 +83,7 @@
                 <div class="col">
                     <div class="input-group">
                         <select class="form-control" id="package_id" name="package_id">
+                            <option value="">Choose The Package</option>
                             @foreach($packages as $package)
                                 <option value="{{ $package->id }}">{{ $package->name }} -
                                     Rp{{ number_format($package->price, 2) }}</option>
@@ -133,7 +134,7 @@
                     console.log('Tables data:', data); // Tambahkan log ini
                     $('#table_id').empty();
                     $.each(data, function (index, table) {
-                        $('#table_id').append('<option value="' + table.id + '">Table ' + table.table_number + ' (Capacity: ' + table.capacity + ')</option>');
+                        $('#table_id').append('<option value="' + table.id + '">Table ' + table.table_number + ' (' + table.capacity + ' person)</option>');
                     });
                 },
                 error: function (xhr, status, error) {

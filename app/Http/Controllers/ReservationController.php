@@ -8,6 +8,7 @@ use App\Models\Package;
 use App\Models\Table;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\ReservationNotification;
+use Illuminate\Support\Facades\Auth;
 
 use Carbon\Carbon;
 
@@ -16,15 +17,12 @@ class ReservationController extends Controller
     public function index()
     {
 
-        $reservations = Reservation::all();
-        return view('reservations.index', ['reservations' => $reservations]);
+        $user = Auth::user();
+        $reservations = Reservation::where('user_id', $user->id)->get(); // Hanya ambil reservasi milik pengguna yang sedang login
+        return view('reservations.index', compact('reservations'));
     }
 
-    public function history()
-    {
-        $reservations = Reservation::where('user_id', auth()->id())->get();
-        return view('reservations.history', compact('reservations'));
-    }
+ 
 
     public function bookCafe(Request $request, $cafeId)
     {
@@ -39,6 +37,7 @@ class ReservationController extends Controller
         $tableId = $request->input('table_id');
         $table = Table::findOrFail($tableId);
         
+        
         // Save validated data into the session to be used after payment
         session([
             'reservation_data' => array_merge($validatedData, ['table_number' => $table->table_number]),
@@ -46,30 +45,32 @@ class ReservationController extends Controller
         ]);
 
         // Redirect to payment page
-        return redirect()->route('reservations.details', ['reservation_data' => $validatedData, 'cafeId' => $cafeId]);
+        return redirect()->route('reservations.details', ['reservation_data' => $validatedData, 'cafeId' => $cafeId, ]);
     }
 
     public function showDetails(Request $request)
     {
         $reservationData = $request->session()->get('reservation_data');
         $cafeId = $request->session()->get('cafe_id');
+        $invoiceNumber = $request->session()->get('invoice_number'); // Retrieve the invoice number
         $cafe = Cafe::findOrFail($cafeId);
         $packages = Package::all();
-
+    
         $formattedDate = Carbon::parse($reservationData['reservation_date'])->format('d M Y');
         $formattedTime = Carbon::parse($reservationData['reservation_time'])->format('H:i');
         $package = Package::findOrFail($reservationData['package_id']);
-
-        $tax = $package->price * 0.01; // Hitung pajak sebagai 1% dari harga paket
+    
+        $tax = $package->price * 0.01; // Calculate tax as 1% of the package price
         $total = $package->price + $tax;
-
-        return view('reservations.detail', compact('reservationData', 'cafe', 'formattedDate', 'formattedTime', 'package', 'tax', 'total'));
+    
+        return view('reservations.detail', compact('reservationData', 'cafe', 'formattedDate', 'formattedTime', 'package', 'tax', 'total', 'invoiceNumber'));
     }
+    
 
     public function showBookForm($cafeId)
     {
         $cafe = Cafe::findOrFail($cafeId);
-        $packages = Package::all();
+        $packages = Package::where('cafe_id', $cafe->id)->get(); // Hanya paket yang terkait dengan kafe
         $tables = Table::where('cafe_id', $cafeId)->where('status', 'available')->get(); // Get all available tables
 
         return view('reservations.book', compact('cafe', 'packages', 'tables'));
@@ -140,6 +141,7 @@ class ReservationController extends Controller
                 'reservation_date' => $reservationData['reservation_date'],
                 'reservation_time' => $reservationData['reservation_time'] . ':00',
                 'table_id' => $reservationData['table_id'],
+                'table_number' => $reservationData['table_number'], // Pastikan ini disertakan
                 'number_of_people' => $reservationData['number_of_people'],
                 'package_id' => $reservationData['package_id'],
                 'status' => 'confirmed',
@@ -169,14 +171,16 @@ class ReservationController extends Controller
 
             $request->session()->forget(['reservation_data', 'cafe_id']);
         });
+        $invoiceNumber = $reservation->id; // Menggunakan ID reservasi sebagai nomor invoice misalnya
+        $request->session()->put('invoice_number', $invoiceNumber); 
          // Buat pesan notifikasi
-    $message = "Reservasi Anda untuk " . $reservationData['reservation_date'] . " pukul " . $reservationData['reservation_time'] . " berhasil!";
+        $message = "Reservasi Anda untuk " . $reservationData['reservation_date'] . " pukul " . $reservationData['reservation_time'] . " berhasil!";
 
     // Kirim notifikasi ke pengguna
     auth()->user()->notify(new ReservationNotification($message));
 
-        return redirect()->route('payments.success', ['reservation_id' => $reservation->id]);
-    }
+    return redirect()->route('payments.success', ['reservation_id' => $reservation->id, 'invoiceNumber' => $invoiceNumber]);
+}
 
     private function generateReservationId()
     {
@@ -201,7 +205,7 @@ class ReservationController extends Controller
         }
 
         // Mengembalikan view 'show' bersama data reservasi
-        return view('payments.invoice', ['reservation' => $reservation]);
+        return view('payments.invoice', ['reservation' => $reservation, 'invoiceNumber' => $reservation->id]);
     }
 
 }

@@ -13,26 +13,28 @@ use App\Http\Controllers\Admin\AdminReservationController;
 use App\Http\Controllers\Admin\AdminTableController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Admin\CategoryController;
-
 use App\Http\Controllers\PaymentController;
 
+Route::middleware(['guest'])->group(function () {
+
+    Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [LoginController::class, 'login']);
+});
+
 // Rute Umum
+Route::middleware(['auth'])->group(function () {
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/home', [HomeController::class, 'index']);
 Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
 Route::get('/cafes', [CafeController::class, 'index'])->name('cafes.index');
 Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
 
-Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('login', [LoginController::class, 'login']);
-Auth::routes(['verify' => true]);
 Route::put('/profile/{user}', [ProfileController::class, 'update'])->name('profile.update');
 
 Route::get('/notifications/check', [NotificationController::class, 'check'])->name('notifications.check');
 Route::post('/notifications/markAsRead', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
 Route::delete('/notifications/read', [NotificationController::class, 'deleteReadNotifications'])->name('notifications.deleteRead');
 
-Route::get('/reservations/history', [ReservationController::class, 'history'])->name('reservations.history');
 Route::get('/cafes/{cafeId}/check-availability', [CafeController::class, 'checkAvailability'])->name('cafes.checkAvailability');
 Route::get('/reservations/{cafeId}/details', [ReservationController::class, 'showDetails'])->name('reservations.details');
 
@@ -54,6 +56,18 @@ Route::post('/payments/process/{reservationId}', [PaymentController::class, 'pro
 
 Route::get('/search', [CafeController::class, 'search'])->name('cafes.search');
 
+
+Route::resource('cafes', CafeController::class)->names([
+    'index'   => 'cafes.index',
+    'create'  => 'cafes.create',
+    'store'   => 'cafes.store',
+    'show'    => 'cafes.show',
+    'edit'    => 'cafes.edit',
+    'update'  => 'cafes.update',
+    'destroy' => 'cafes.destroy',
+]);
+});
+
 // Rute Admin
 Route::prefix('admin')->group(function () {
     Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
@@ -73,12 +87,3 @@ Route::prefix('admin')->group(function () {
     });
 });
 
-Route::resource('cafes', CafeController::class)->names([
-    'index'   => 'cafes.index',
-    'create'  => 'cafes.create',
-    'store'   => 'cafes.store',
-    'show'    => 'cafes.show',
-    'edit'    => 'cafes.edit',
-    'update'  => 'cafes.update',
-    'destroy' => 'cafes.destroy',
-]);

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Reservation;
 use App\Services\PaymentService;
+use Picqer\Barcode\BarcodeGeneratorPNG;
+use Illuminate\Support\Facades\Storage;
 
 class PaymentController extends Controller
 {
@@ -53,12 +55,17 @@ class PaymentController extends Controller
 
     public function success($reservation_id)
     {
-        $reservation = Reservation::find($reservation_id);
-        if (!$reservation) {
-            abort(404);
-        }
+       // Ambil data reservasi berdasarkan ID
+       $reservation = Reservation::findOrFail($reservation_id);
 
-        return view('payments.success', ['reservation' => $reservation]);
+       // Generate URL untuk barcode menggunakan API eksternal
+       $barcodeUrl = "https://bwipjs-api.metafloor.com/?bcid=code128&text=" . $reservation->id . "&scale=3&includetext";
+
+       // Kirim data ke view
+       return view('payments.success', [
+           'reservation' => $reservation,
+           'barcodeUrl' => $barcodeUrl
+       ]);
     }
 
     public function invoice($reservationId)

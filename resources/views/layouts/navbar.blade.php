@@ -1,6 +1,3 @@
-@extends('layouts.app')
-
-@section('content')
     <!-- Navbar -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 
@@ -135,4 +132,3 @@
         display: none; /* Sembunyikan secara default */
     }
     </style>
-@endsection
