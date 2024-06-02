@@ -4,6 +4,10 @@
 <!-- Ensure Bootstrap Icons are loaded -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
 <div class="container my-4"
     style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
     <h1 class="mb-4" style="color: #5B3708;">Edit Cafe</h1>
@@ -91,6 +95,12 @@
 
         <button type="submit" class="btn btn-primary btn-content">Update</button>
     </form>
+    @if(session('success'))
+        toastr.success('{{ session('success') }}', 'Success', {
+            closeButton: true,
+            progressBar: true,
+        });
+    @endif
 </div>
 @endsection
 <script>

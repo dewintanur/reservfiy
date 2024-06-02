@@ -83,6 +83,18 @@
 
         <button type="submit" class="btn btn-primary btn-content">Save</button>
     </form>
+    <script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    </script>
+    @if(session('success'))
+        toastr.success('{{ session('success') }}', 'Success', {
+            closeButton: true,
+            progressBar: true,
+        });
+    @endif
 </div>
 @endsection
 

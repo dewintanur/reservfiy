@@ -3,12 +3,14 @@
 @section('content')
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
 <style>
     body {
         background-color: #f4f4f4; /* Light grey background for soft contrast */
         padding:  0 !important;
     }
-    .container-fluid{
+    .container-fluid {
         padding: 0 !important;
     }
     .container {
@@ -52,6 +54,9 @@
         color: #555; /* Darker text color for better readability */
     }
 </style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <div class="container">
     <h1 class="mb-4">Dashboard Admin</h1>
@@ -120,5 +125,12 @@
             }
         }
     });
+
+    @if(session('success'))
+        toastr.success('{{ session('success') }}', 'Success', {
+            closeButton: true,
+            progressBar: true,
+        });
+    @endif
 </script>
 @endsection

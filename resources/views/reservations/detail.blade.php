@@ -122,7 +122,7 @@
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/b uild/qrcode.min.js"></script>
 
 <script>
     
