@@ -8,7 +8,9 @@
         background-color: #f4f4f4; /* Light grey background for soft contrast */
         padding:  0 !important;
     }
-
+    .container-fluid{
+        padding: 0 !important;
+    }
     .container {
         font-family: 'Roboto', sans-serif;
         color: #333; /* Dark grey text color for readability */

@@ -16,7 +16,7 @@ class DashboardController extends Controller
 
         $userCount = User::count();  // Menghitung jumlah pengguna
         $cafeCount = Cafe::count();  // Menghitung jumlah cafe
-        $reservationCount = Reservation::where('status', 'active')->count();  // Menghitung reservasi yang aktif
+        $reservationCount = Reservation::where('status', '!=', 'booked')->count();
 
         // Kirim data ke view
         return view('admin.dashboard', compact('userCount', 'cafeCount', 'reservationCount'));

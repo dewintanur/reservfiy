@@ -22,12 +22,12 @@ class AdminLoginController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->only('username', 'password');
-    
+
         if (Auth::guard('admin')->attempt($credentials)) {
             // Login berhasil, redirect ke dashboard admin
             return redirect()->route('admin.dashboard');
         }
-    
+
         // Login gagal, kembali ke form login dengan pesan error
         return back()->withErrors(['username' => 'These credentials do not match our records.']);
     }
@@ -40,7 +40,4 @@ class AdminLoginController extends Controller
 
         return redirect('/admin/login');  // Mengarahkan kembali ke halaman login admin
     }
-    
-
-    
 }

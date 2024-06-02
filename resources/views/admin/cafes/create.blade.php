@@ -73,13 +73,13 @@
             <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addPackage()">Add Package</button>
         </div>
           <!-- Tables Section -->
-          <div class="mb-3">
+          <!-- <div class="mb-3">
             <h5>Tables</h5>
-            <div id="tables">
+            <div id="tables"> -->
                 <!-- Tables will be added here dynamically -->
-            </div>
+            <!-- </div>
             <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addTable()">Add Table</button>
-        </div>
+        </div> -->
 
         <button type="submit" class="btn btn-primary btn-content">Save</button>
     </form>

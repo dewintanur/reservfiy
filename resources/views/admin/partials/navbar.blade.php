@@ -82,10 +82,13 @@
         background-color: #5B3708; /* Chocolate background on hover */
         color: #FFFFFF; /* White text on hover */
     }
-
+    .container-fluid{
+        margin: 5;
+    }
     @media (max-width: 992px) {
         .navbar-collapse {
             background-color: rgba(255, 255, 255, 0.95); /* Slightly more opaque for mobile */
         }
     }
+    
 </style>
